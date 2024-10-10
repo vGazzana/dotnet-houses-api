@@ -28,7 +28,7 @@ namespace respTest1.Controllers
 			if (_cache.TryGetValue(AllHousesCacheKey, out var housesFromCache))
 			{
 				Console.WriteLine("House Cache Match");
-				Response.Headers.Add("is-cached", "true");
+				Response.Headers.Append("is-cached", "true");
 				return Ok(housesFromCache);
 			}
 
@@ -41,11 +41,21 @@ namespace respTest1.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Houses>> GetHouseById(int id)
 		{
+			string houseCacheKey = $"house_{id}";
+			if (_cache.TryGetValue(houseCacheKey, out var houseFromCache))
+			{
+				Console.WriteLine($"House-{id} Cache Match");
+				Response.Headers.Append("is-cached", "true");
+				return Ok(houseFromCache);
+			}
+			Console.WriteLine($"Fetching House-{id} from database");
+
 			var house = await _context.Houses.FindAsync(id);
 			if (house == null)
 			{
 				return NotFound();
 			}
+			_cache.Set(houseCacheKey, house, TimeSpan.FromMinutes(1));
 			return Ok(house);
 		}
 	}
