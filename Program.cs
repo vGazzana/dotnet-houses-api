@@ -1,4 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using respTest1.Contexts;
+using respTest1.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+
+string connectionString = "Data Source=houses.db";
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
+
+
+builder.Services.AddScoped<ApiHousesSeed>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -16,29 +27,18 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
+// Popular o banco de dados com dados da API
+using (var scope = app.Services.CreateScope())
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var apiService = scope.ServiceProvider.GetRequiredService<ApiHousesSeed>();
+
+    var apiUrl = "https://www.anapioficeandfire.com/api/houses";
+    await apiService.PopulateDatabaseWithApiDataAsync(dbContext, apiUrl);
+}
+
+
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
