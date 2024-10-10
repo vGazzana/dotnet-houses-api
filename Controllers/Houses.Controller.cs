@@ -21,5 +21,16 @@ namespace respTest1.Controllers
 		{
 			return await _context.Houses.ToListAsync();
 		}
+
+		[HttpGet("{id}")]
+		public async Task<ActionResult<Houses>> GetHouseById(int id)
+		{
+			var house = await _context.Houses.FindAsync(id);
+			if (house == null)
+			{
+				return NotFound();
+			}
+			return Ok(house);
+		}
 	}
 }
