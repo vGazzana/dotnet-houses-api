@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using respTest1.Contexts;
 using respTest1.Models;
 
@@ -10,16 +11,31 @@ namespace respTest1.Controllers
 	public class HousesController : ControllerBase
 	{
 		private readonly AppDbContext _context;
+		private readonly IMemoryCache _cache;
 
-		public HousesController(AppDbContext context)
+		private const string AllHousesCacheKey = "all_houses";
+
+		public HousesController(AppDbContext context, IMemoryCache cache)
 		{
 			_context = context;
+			_cache = cache;
 		}
 
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Houses>>> GetHouses()
 		{
-			return await _context.Houses.ToListAsync();
+
+			if (_cache.TryGetValue(AllHousesCacheKey, out var housesFromCache))
+			{
+				Console.WriteLine("House Cache Match");
+				Response.Headers.Add("is-cached", "true");
+				return Ok(housesFromCache);
+			}
+
+			Console.WriteLine("Fetching Houses from database");
+			var housesFromDB = await _context.Houses.ToListAsync();
+			_cache.Set(AllHousesCacheKey, housesFromDB, TimeSpan.FromMinutes(1));
+			return Ok(housesFromDB);
 		}
 
 		[HttpGet("{id}")]
