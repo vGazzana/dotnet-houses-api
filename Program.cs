@@ -11,6 +11,8 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connect
 
 builder.Services.AddScoped<ApiHousesSeed>();
 
+builder.Services.AddControllers();
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -28,6 +30,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
+
 // Popular o banco de dados com dados da API
 using (var scope = app.Services.CreateScope())
 {
@@ -38,6 +41,7 @@ using (var scope = app.Services.CreateScope())
     await apiService.PopulateDatabaseWithApiDataAsync(dbContext, apiUrl);
 }
 
+app.MapControllers();
 
 
 app.Run();
