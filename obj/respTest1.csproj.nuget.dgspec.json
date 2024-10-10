@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/var/www/javier-projects/prova-2024/respTest1/respTest1.csproj": {}
+    "/var/www/dotnet-houses-api/respTest1.csproj": {}
   },
   "projects": {
-    "/var/www/javier-projects/prova-2024/respTest1/respTest1.csproj": {
+    "/var/www/dotnet-houses-api/respTest1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/var/www/javier-projects/prova-2024/respTest1/respTest1.csproj",
+        "projectUniqueName": "/var/www/dotnet-houses-api/respTest1.csproj",
         "projectName": "respTest1",
-        "projectPath": "/var/www/javier-projects/prova-2024/respTest1/respTest1.csproj",
+        "projectPath": "/var/www/dotnet-houses-api/respTest1.csproj",
         "packagesPath": "/home/dev/.nuget/packages/",
-        "outputPath": "/var/www/javier-projects/prova-2024/respTest1/obj/",
+        "outputPath": "/var/www/dotnet-houses-api/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/dev/.nuget/NuGet/NuGet.Config"
